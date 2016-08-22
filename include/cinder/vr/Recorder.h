@@ -38,19 +38,71 @@
 
 #pragma once
 
-#include "cinder/vr/Context.h"
-#include "cinder/vr/Environment.h"
-#include "cinder/vr/Hmd.h"
-#include "cinder/vr/Recorder.h"
+#include "cinder/vr/Controller.h"
+#include "cinder/Filesystem.h"
 
-#if defined( CINDER_VR_ENABLE_OCULUS )
-	#if defined( CINDER_MSW )
-		#pragma comment( lib, "LibOVR.lib" )
-	#endif
-#endif
+namespace cinder { namespace vr {
 
-#if defined( CINDER_VR_ENABLE_OPENVR )
-	#if defined( CINDER_MSW )
-		#pragma comment( lib, "openvr_api.lib" )
-	#endif
-#endif
+class Recorder;
+using RecorderRef = std::shared_ptr<Recorder>;
+
+//! \class Recorder
+//!
+//! All pose data is stored in the devices tracking coordinate system.
+//!
+class Recorder {
+public:
+
+	enum Mode { RECORD, PLAYBACK };
+	
+	//! \class ControllerInput
+	//!
+	//!
+	struct Input {
+		enum class Type : uint32_t { UNKNOWN = 0xFFFFFFFF, POSE = 0, BUTTON, TRIGGER, AXIS };
+		Input::Type				mType = Input::Type::UNKNOWN;
+		uint32_t				mSize = 0;
+		std::vector<uint8_t>	mData;
+	};
+
+	//! \class Frame
+	//!
+	//!
+	class Frame {
+	public:
+		Frame() {}
+		Frame( uint32_t frame, double time ) : mFrame( frame ) {}
+		uint32_t								getFrame() const { return mFrame; }
+		double									getTime() const { return mTime; }
+		const ci::mat4&							getHmdPose() const { return mHmdPose; }
+		void									setHmdPose( const ci::mat4& pose ) { mHmdPose = pose; }
+		void									appendInput( const Recorder::Input& input ) { mInput.push_back( input ); }
+		const std::vector<Recorder::Input>&		getInput() const { return mInput; }
+	private:
+		uint32_t								mFrame = 0;
+		double									mTime = 0;
+		ci::mat4								mHmdPose;
+		std::vector<Recorder::Input>			mInput;
+	};
+
+	// ---------------------------------------------------------------------------------------------
+
+	static RecorderRef				create( Recorder::Mode mode );
+
+	//! Advance to the next frame for recording
+	virtual Recorder::Frame*		nextFrame( uint32_t frameNum, double elapsedSeconds );
+	//! Advance to the next frame for playback
+	virtual const Recorder::Frame*	nextFrame() const;
+	
+	virtual bool					read( const ci::fs::path& filePath );
+	virtual bool					write( const ci::fs::path& filePath );
+
+private:
+	Recorder( Recorder::Mode mode );
+
+	Recorder::Mode					mMode;
+	std::vector<Recorder::Frame>	mFrames;
+	mutable size_t					mCurrentFrameIndex = std::numeric_limits<size_t>::max();
+};
+
+}} // namespace cinder::vr

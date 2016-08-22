@@ -36,6 +36,7 @@
     <ClInclude Include="..\include\cinder\vr\openvr\Hmd.h" />
     <ClInclude Include="..\include\cinder\vr\openvr\OpenVr.h" />
     <ClInclude Include="..\include\cinder\vr\Platform.h" />
+    <ClInclude Include="..\include\cinder\vr\Recorder.h" />
     <ClInclude Include="..\include\cinder\vr\SessionOptions.h" />
     <ClInclude Include="..\include\cinder\vr\Vr.h" />
     <ClInclude Include="..\src\cinder\vr\IconLeftHand.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="..\src\cinder\vr\openvr\DeviceManager.cpp" />
     <ClCompile Include="..\src\cinder\vr\openvr\Hmd.cpp" />
     <ClCompile Include="..\src\cinder\vr\openvr\OpenVr.cpp" />
+    <ClCompile Include="..\src\cinder\vr\Recorder.cpp" />
     <ClCompile Include="..\src\cinder\vr\SessionOptions.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

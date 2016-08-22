@@ -102,6 +102,9 @@
     <ClInclude Include="..\src\cinder\vr\IconRightHand.h">
       <Filter>Source Files\cinder\vr</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\cinder\vr\Recorder.h">
+      <Filter>Header Files\cinder\vr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\cinder\vr\Context.cpp">
@@ -153,6 +156,9 @@
       <Filter>Source Files\cinder\vr\oculus</Filter>
     </ClCompile>
     <ClCompile Include="..\src\cinder\vr\SessionOptions.cpp">
+      <Filter>Source Files\cinder\vr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\cinder\vr\Recorder.cpp">
       <Filter>Source Files\cinder\vr</Filter>
     </ClCompile>
   </ItemGroup>

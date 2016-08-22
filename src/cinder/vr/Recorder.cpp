@@ -36,21 +36,50 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
-
-#include "cinder/vr/Context.h"
-#include "cinder/vr/Environment.h"
-#include "cinder/vr/Hmd.h"
 #include "cinder/vr/Recorder.h"
 
-#if defined( CINDER_VR_ENABLE_OCULUS )
-	#if defined( CINDER_MSW )
-		#pragma comment( lib, "LibOVR.lib" )
-	#endif
-#endif
+namespace cinder { namespace vr {
 
-#if defined( CINDER_VR_ENABLE_OPENVR )
-	#if defined( CINDER_MSW )
-		#pragma comment( lib, "openvr_api.lib" )
-	#endif
-#endif
+Recorder::Recorder( Recorder::Mode mode )
+	: mMode( mode )
+{
+}
+
+Recorder::Frame* Recorder::nextFrame( uint32_t frameNum, double elapsedSeconds )
+{
+	Recorder::Frame* result = nullptr;
+	if( Recorder::Mode::RECORD == mMode ) {
+		Recorder::Frame frame( frameNum, elapsedSeconds );
+		mFrames.push_back( frame );
+		result = &(mFrames.back());
+	}
+	return result;
+}
+
+const Recorder::Frame* Recorder::nextFrame() const
+{
+	if( ( std::numeric_limits<size_t>::max() == mCurrentFrameIndex ) && ( ! mFrames.empty() ) ) {
+		mCurrentFrameIndex = 0;
+	}
+	else {
+		++mCurrentFrameIndex;
+	}
+
+	const Recorder::Frame* result = nullptr;
+	if( ( Recorder::Mode::PLAYBACK == mMode ) && ( mCurrentFrameIndex < mFrames.size() ) ) {
+		result = &mFrames[mCurrentFrameIndex];
+	}
+	return result;
+}
+
+bool Recorder::read( const ci::fs::path& filePath )
+{
+	return false;
+}
+
+bool Recorder::write( const ci::fs::path& filePath )
+{
+	return false;
+}
+
+}} // namespace cinder::vr
